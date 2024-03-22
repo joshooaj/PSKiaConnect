@@ -1,0 +1,28 @@
+name: NotifyOnStarred
+on:
+  watch:
+    types: [started]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: SendNotification
+        env:
+          PUSHOVER_APP_TOKEN: ${{ secrets.PUSHOVER_APP_TOKEN }}
+          PUSHOVER_GROUP_TOKEN: ${{ secrets.PUSHOVER_GROUP_TOKEN }}
+        shell: pwsh
+        run: |
+          Install-Module joshooaj.PSPushover -Force -Confirm:$false -ErrorAction Stop
+          $msg = @{
+            Message    = 'Someone ⭐''d the repo 🎉'
+            Sound      = 'magic'
+            Attachment = [io.file]::ReadAllBytes((Resolve-Path ./docs/assets/images/star.png))
+            FileName   = 'star.png'
+            Url        = 'https://github.com/joshooaj/PSKiaConnect'
+            UrlTitle   = 'github.com/joshooaj/PSKiaConnect'
+            Token      = $env:PUSHOVER_APP_TOKEN   | ConvertTo-SecureString -AsPlainText -Force
+            User       = $env:PUSHOVER_GROUP_TOKEN | ConvertTo-SecureString -AsPlainText -Force
+          }
+          Send-Pushover @msg

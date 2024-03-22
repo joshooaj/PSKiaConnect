@@ -1,0 +1,64 @@
+name: Docs
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/**
+      - mkdocs.yml
+      - .github/workflows/Docs.yml
+
+jobs:
+  DeployDocs:
+    # Grant the minimum permissions necessary for this job to publish to GitHub Pages
+    permissions:
+      contents: write
+      pages: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/cache@v4
+        with:
+          key: ${{ runner.os }}
+          path: .cache
+
+      - name: Load PSDepend Requirements
+        id: psdepend
+        shell: pwsh
+        run: |
+          $reqs = Import-PowerShellDataFile ./requirements.psd1
+          $moduleNames = $reqs.Keys | Where-Object { $_ -ne 'PSDependOptions' -and $null -eq $reqs[$_].DependencyType }
+          $dependencyList = ($moduleNames | Sort-Object | ForEach-Object { '{0}:{1}' -f $_, $reqs[$_].Version  }) -join ', '
+          "psdependencies=$dependencyList" >> $env:GITHUB_OUTPUT
+
+      - name: Install and cache PowerShell modules
+        uses: potatoqualitee/psmodulecache@v6.0
+        with:
+          modules-to-cache: ${{ steps.psdepend.outputs.psdependencies }}
+
+      - id: image-cache
+        uses: actions/cache@v4
+        with:
+          key: ${{ runner.os }}-docker-cache
+          path: .docker
+
+      - name: Cache docker image
+        if: steps.image-cache.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+            $null = New-Item .docker/ -ItemType Directory -Force
+            docker pull squidfunk/mkdocs-material:9
+            docker save -o ./.docker/mkdocs-material.tar squidfunk/mkdocs-material:9
+
+      - if: steps.image-cache.outputs.cache-hit == 'true'
+        run: docker load -i ./.docker/mkdocs-material.tar
+
+      - name: MkDocs GH-Deploy
+        if: github.ref == 'refs/heads/main'
+        shell: pwsh
+        run: .\build.ps1 -Bootstrap -Task PublishDocs
