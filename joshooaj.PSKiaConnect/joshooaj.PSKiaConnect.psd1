@@ -9,7 +9,7 @@
     Description       = 'Send notifications to any device from PowerShell using pushover.net.'
     # FunctionsToExport is updated in the output directory by PowerShellBuild
     FunctionsToExport = '*'
-    ScriptsToProcess  = @('./Classes/PSKiaConnect.classes.ps1')
+    ScriptsToProcess  = @()
     CmdletsToExport   = @()
     VariablesToExport = @()
     AliasesToExport   = @()

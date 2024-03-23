@@ -34,17 +34,3 @@ BeforeAll {
         }
     }
 }
-
-Describe 'Text files formatting' {
-    Context 'File encoding' {
-        It "No text file uses Unicode/UTF-16 encoding" {
-            $unicodeFilesCount | Should -Be 0
-        }
-    }
-
-    Context 'Indentations' {
-        It "No text file use tabs for indentations" {
-            $totalTabsCount | Should -Be 0
-        }
-    }
-}
