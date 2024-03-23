@@ -30,5 +30,6 @@
     'DotnetCLI'          = @{
         DependencyType = 'DotnetSdk'
         Version        = '8.0.200'
+        Target         = './.cache/dotnet/'
     }
 }
