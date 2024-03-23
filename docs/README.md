@@ -7,8 +7,8 @@
 ![PowerShell Gallery Downloads](https://img.shields.io/powershellgallery/dt/joshooaj.PSKiaConnect)
 ![GitHub License](https://img.shields.io/github/license/joshooaj/PSKiaConnect)
 
-{{ overview placeholder }}
+## Warning
 
-## :fontawesome-solid-person-walking-arrow-right: Getting started
+This module is a mess. While functional at times, the cmdlets were written while reverse engineering the necessary API calls and interpreting the responses. There are commands that should exist and don't. There are commands that do exist that don't need to be public. The returns values are mostly raw and you'll have to figure it out on your own. The documentation is stubbed out but basically non-existent.
 
-{{ placeholder }}
+Enjoy at your own risk!
