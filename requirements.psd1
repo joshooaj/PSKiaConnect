@@ -27,4 +27,8 @@
         DependencyType = 'Command'
         Source         = 'pip install -qr requirements.txt --cache-dir .cache/pip/'
     }
+    'DotnetCLI'          = @{
+        DependencyType = 'DotnetSdk'
+        Version        = '8.0.200'
+    }
 }
